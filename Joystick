@@ -1,0 +1,52 @@
+void buttonpushed() {
+  if (yj == -1) { //UP
+    directionUP = true;
+  }
+  if (directionUP == true) {
+    y = y-speed;
+  }
+
+  if (yj == 1) { 
+    directionDOWN = true;
+  }
+  if (directionDOWN == true) {
+    y = y+speed;
+  }
+  
+   if (xj == -1) { 
+    directionLEFT = true;
+  }
+  if (directionLEFT == true) {
+    x = x-speed;
+  }
+  
+   if (xj == 1) { 
+    directionRIGHT = true;
+  }
+  if (directionRIGHT == true) {
+    x = x+speed;
+  }
+  
+  if(directionUP == true){
+    directionDOWN = false;
+    directionLEFT = false;
+    directionRIGHT = false;
+  }
+    if(directionDOWN == true){
+    directionUP = false;
+    directionLEFT = false;
+    directionRIGHT = false;
+  }
+    if(directionLEFT == true){
+    directionDOWN = false;
+    directionUP = false;
+    directionRIGHT = false;
+  }
+    if(directionRIGHT == true){
+    directionDOWN = false;
+    directionLEFT = false;
+    directionUP = false;
+  }
+}
+  
+  
