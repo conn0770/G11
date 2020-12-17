@@ -1,0 +1,159 @@
+import processing.serial.*; //import the Serial library
+Serial myPort;
+
+int xjoy;
+int yjoy;
+int bjoy;
+String portName;
+String val;
+
+int x = 300;
+int y = 300;
+int speed = 5;
+int boxx;
+int boxy;
+boolean box = false;
+int points = 0;
+
+int lengthsnake = 10;
+int maxsnake = 10000;
+int [] snakex = new int [maxsnake];
+int [] snakey = new int [maxsnake];
+
+float xj;
+float yj;
+
+boolean directionUP;
+boolean directionDOWN;
+boolean directionLEFT;
+boolean directionRIGHT;
+
+
+void setup() {
+  myPort = new Serial(this, Serial.list()[0], 9600);
+  myPort.bufferUntil('\n'); 
+  delay(2000);
+
+  size(1000, 1000);
+  rectMode(CENTER);
+  textSize(32);
+  textAlign(LEFT);
+}
+
+// drawing loop
+void draw() {
+
+
+  contact();
+  text("Points:", height/2, width/2);
+  background (0);
+  delay(10);
+  buttonpushed();
+  xj = map(xjoy, 0, 1023, -1, 1);
+  yj = map(yjoy, 0, 1023, -1, 1);
+  print("X= ");
+  println(xjoy);
+  print("Y= ");
+  println(yjoy);
+
+  if (box == false) {
+
+    boxx = int(random(100, 500));
+    boxy = int(random(100, 500));
+    box = true;
+  }
+
+  fill(0, 255, 0);
+  ellipse(boxx, boxy, 35, 35);
+
+  for (int i = lengthsnake; i>0; i--) {
+    snakex[i] = snakex [i-1];
+    snakey[i] = snakey [i-1];
+  }
+
+  snakex [ 0 ] = x;
+  snakey [ 0 ] = y;
+  for (int i = 1; i<lengthsnake; i++) {
+    fill(255);
+
+    rect(snakex[i], snakey[i], 40, 40);
+  }
+  text("Points:", (width/2) - 60, (height/2));
+  text(points, (width/2) + 50, (height/2));
+}
+
+void serialEvent( Serial myPort) {
+  val = myPort.readStringUntil('\n');
+  if (val != null) {
+    val = trim(val);
+    int[] vals = int(splitTokens(val, ","));
+    xjoy = vals[0];
+    yjoy = vals[1] ;
+    bjoy = vals[2];
+  }
+}
+
+void buttonpushed() {
+  if (yj == -1) { //UP
+    directionUP = true;
+    xj = 0;
+  }
+  if (directionUP == true) {
+    y = y-speed;
+    directionDOWN = false;
+    directionLEFT = false;
+    directionRIGHT = false;
+  }
+
+  if (yj == 1) { 
+    directionDOWN = true;
+    xj = 0;
+  }
+  if (directionDOWN == true) {
+    y = y+speed;
+    directionUP = false;
+    directionLEFT = false;
+    directionRIGHT = false;
+  }
+
+  if (xj == -1) { 
+    directionLEFT = true;
+    yj = 0;
+  }
+  if (directionLEFT == true) {
+    x = x-speed;
+    directionDOWN = false;
+    directionUP = false;
+    directionRIGHT = false;
+  }
+
+  if (xj == 1) { 
+    directionRIGHT = true;
+    yj = 0;
+  }
+  if (directionRIGHT == true) {
+    x = x+speed;
+    directionDOWN = false;
+    directionLEFT = false;
+    directionUP = false;
+  }
+}
+
+void contact() {
+  if (snakey[0] > 1000 || snakey[0] < 0) {
+    exit();
+  } 
+  if (snakex[0] > 1000 || snakex[0] < 0) {
+    exit();
+  }
+
+  if (( x > boxx - 17)&&( x < boxx +17 )) {
+
+    if (( y > boxy - 17)&&( y < boxy +17 )) {
+      boxy = int(random(0, 500)) ;
+      boxx = int(random(0, 500)) ;
+      lengthsnake = lengthsnake +2;
+      points = points + 1;
+    }
+  }
+}
